@@ -1,6 +1,6 @@
 name: chat_uikit_keyboard_panel
 description: "A Flutter keyboard plugin, It is used to switch between the input keyboard and the expression keyboard."
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/dujiepeng/chat_uikit_keyboard_panel.git
 
 environment:

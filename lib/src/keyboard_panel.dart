@@ -115,6 +115,8 @@ class _ChatUIKitKeyboardPanelState extends State<ChatUIKitKeyboardPanel> {
     if (_currentPanelType != ChatUIKitKeyboardPanelType.keyboard) {
       _responding = false;
       widget.controller.inputPanelFocusNode?.unfocus();
+    } else {
+      _responding = true;
     }
     widget.onPanelChanged?.call(panelType);
     setState(() {});
@@ -129,9 +131,7 @@ class _ChatUIKitKeyboardPanelState extends State<ChatUIKitKeyboardPanel> {
         height: keyboardHeight,
         child: _currentPanel,
       ),
-      onEnd: () {
-        _responding = true;
-      },
+      onEnd: () {},
     );
 
     return content;
