@@ -1,0 +1,22 @@
+PODS:
+  - chat_uikit_keyboard_panel (0.0.1):
+    - Flutter
+  - Flutter (1.0.0)
+
+DEPENDENCIES:
+  - chat_uikit_keyboard_panel (from `.symlinks/plugins/chat_uikit_keyboard_panel/ios`)
+  - Flutter (from `Flutter`)
+
+EXTERNAL SOURCES:
+  chat_uikit_keyboard_panel:
+    :path: ".symlinks/plugins/chat_uikit_keyboard_panel/ios"
+  Flutter:
+    :path: Flutter
+
+SPEC CHECKSUMS:
+  chat_uikit_keyboard_panel: 67cdf0084a828cc82c53c7065b54d92b9fc8951e
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+
+PODFILE CHECKSUM: 6e700dec67e6deac9b1c69bb14c49a2217a12d15
+
+COCOAPODS: 1.15.2
