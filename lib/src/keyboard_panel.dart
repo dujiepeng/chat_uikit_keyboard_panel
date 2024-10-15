@@ -76,7 +76,7 @@ class _ChatUIKitKeyboardPanelState extends State<ChatUIKitKeyboardPanel> {
           if (Platform.isAndroid) {
             keyboardHeight = height / View.of(context).devicePixelRatio;
           } else {
-            keyboardHeight += height;
+            keyboardHeight = height;
             if (currentPanelType == ChatUIKitKeyboardPanelType.keyboard) {
               if (widget.maintainBottomViewPadding == true) {
                 keyboardHeight -= 34;

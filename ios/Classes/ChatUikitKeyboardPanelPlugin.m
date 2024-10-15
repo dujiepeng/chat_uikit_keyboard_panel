@@ -45,18 +45,16 @@
 - (void)keyboardAction:(NSNotification*)sender{
 
      NSDictionary *useInfo = [sender userInfo];
-     NSValue *value = [useInfo objectForKey:UIKeyboardFrameEndUserInfoKey];
+     
 
-
+    NSValue *value = [useInfo objectForKey:UIKeyboardFrameEndUserInfoKey];
      if([sender.name isEqualToString:UIKeyboardWillShowNotification]){
-         if(_height == [value CGRectValue].size.height) {
-             return;
-         }
          _height = [value CGRectValue].size.height;
          [self.channel invokeMethod:@"height" arguments:@(_height)];
      }else if ([sender.name isEqualToString:UIKeyboardWillHideNotification]){
-         [self.channel invokeMethod:@"height" arguments:[NSNumber numberWithDouble:0]];
          _height = 0;
+         [self.channel invokeMethod:@"height" arguments:[NSNumber numberWithDouble:_height]];
+         
      }
  }
 
