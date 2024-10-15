@@ -71,7 +71,9 @@ class _ChatUIKitKeyboardPanelState extends State<ChatUIKitKeyboardPanel> {
     super.initState();
     widget.controller._attach(this);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      ChatUikitKeyboardHeight.instance.onKeyboardHeightChange = (height) {
+      ChatUikitKeyboardHeight.instance.onKeyboardHeightChange =
+          (height, safeArea) {
+        debugPrint('height: $height, safeArea: $safeArea');
         if (_responding) {
           if (Platform.isAndroid) {
             keyboardHeight = height / View.of(context).devicePixelRatio;
@@ -79,7 +81,7 @@ class _ChatUIKitKeyboardPanelState extends State<ChatUIKitKeyboardPanel> {
             keyboardHeight = height;
             if (currentPanelType == ChatUIKitKeyboardPanelType.keyboard) {
               if (widget.maintainBottomViewPadding == true) {
-                keyboardHeight -= 34;
+                keyboardHeight -= safeArea;
                 keyboardHeight = max(keyboardHeight, 0);
               }
             }

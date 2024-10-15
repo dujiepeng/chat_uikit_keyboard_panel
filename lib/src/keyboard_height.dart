@@ -6,19 +6,21 @@ class ChatUikitKeyboardHeight {
   static ChatUikitKeyboardHeight get instance =>
       _instance ??= ChatUikitKeyboardHeight._();
 
-  void Function(double height)? _onKeyboardHeightChange;
+  void Function(double height, double safeArea)? _onKeyboardHeightChange;
 
   ChatUikitKeyboardHeight._() {
     channel.setMethodCallHandler((call) async {
       if (call.method == 'height') {
-        final double height = call.arguments as double;
-
-        _onKeyboardHeightChange?.call(height);
+        Map map = call.arguments;
+        double height = map["height"] ?? 0;
+        double safeArea = map["safeArea"] ?? 0;
+        _onKeyboardHeightChange?.call(height, safeArea);
       }
     });
   }
 
-  set onKeyboardHeightChange(void Function(double height) value) {
+  set onKeyboardHeightChange(
+      void Function(double height, double safeArea) value) {
     _onKeyboardHeightChange = value;
   }
 }

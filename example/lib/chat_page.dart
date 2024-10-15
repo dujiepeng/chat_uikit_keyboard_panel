@@ -126,9 +126,7 @@ class _ChatPageState extends State<ChatPage> {
     return ChatUIKitBottomPanel(
       height: 0,
       panelType: ChatUIKitKeyboardPanelType.keyboard,
-      child: Container(
-        color: Colors.yellow,
-      ),
+      child: Container(),
     );
   }
 

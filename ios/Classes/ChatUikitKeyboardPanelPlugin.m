@@ -3,6 +3,7 @@
 @interface ChatUikitKeyboardPanelPlugin()
 {
     double _height;
+    double _bottom;
 }
 
 @property (nonatomic, strong) FlutterMethodChannel* channel;
@@ -26,6 +27,10 @@
 -(instancetype)init{
     if (self = [super init]) {
         [self addObserver];
+        if (@available(iOS 11.0, *)) {
+            UIEdgeInsets safeAreaInsets = [[UIApplication sharedApplication].delegate.window safeAreaInsets];
+            _bottom = safeAreaInsets.bottom;
+        }
         return self;
     }
 
@@ -50,11 +55,10 @@
     NSValue *value = [useInfo objectForKey:UIKeyboardFrameEndUserInfoKey];
      if([sender.name isEqualToString:UIKeyboardWillShowNotification]){
          _height = [value CGRectValue].size.height;
-         [self.channel invokeMethod:@"height" arguments:@(_height)];
+         [self.channel invokeMethod:@"height" arguments:@{@"height": [NSNumber numberWithDouble:_height], @"safeArea":[NSNumber numberWithDouble:_bottom]}];
      }else if ([sender.name isEqualToString:UIKeyboardWillHideNotification]){
          _height = 0;
-         [self.channel invokeMethod:@"height" arguments:[NSNumber numberWithDouble:_height]];
-         
+         [self.channel invokeMethod:@"height" arguments:@{@"height": [NSNumber numberWithDouble:_height], @"safeArea":[NSNumber numberWithDouble:_bottom]}];
      }
  }
 

@@ -5,6 +5,8 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
+import java.util.HashMap;
+
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
@@ -42,8 +44,10 @@ public class ChatUikitKeyboardPanelPlugin implements FlutterPlugin, MethodCallHa
     rootView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
       Rect rect = new Rect();
       rootView.getWindowVisibleDisplayFrame(rect);
-      int keyboardHeight = rootView.getHeight() - rect.bottom;
-      channel.invokeMethod("height", (double)keyboardHeight);
+      double keyboardHeight = rootView.getHeight() - rect.bottom;
+      HashMap<String, Double> map = new HashMap<>();
+      map.put("height", keyboardHeight);
+      channel.invokeMethod("height", map);
     });
   }
 
