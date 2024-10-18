@@ -10,7 +10,6 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  final FocusNode _inputPanelFocusNode = FocusNode();
   late final ChatUIKitKeyboardPanelController _keyboardPanelController;
 
   ChatUIKitKeyboardPanelType _currentPanelType =
@@ -23,9 +22,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-    _keyboardPanelController = ChatUIKitKeyboardPanelController(
-      inputPanelFocusNode: _inputPanelFocusNode,
-    );
+    _keyboardPanelController = ChatUIKitKeyboardPanelController();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _scrollController.jumpTo(0);
@@ -97,7 +94,7 @@ class _ChatPageState extends State<ChatPage> {
                 }
               },
               child: TextField(
-                focusNode: _inputPanelFocusNode,
+                focusNode: _keyboardPanelController.inputPanelFocusNode,
                 readOnly: readOnly,
                 showCursor: true,
                 decoration: const InputDecoration(
