@@ -13,10 +13,12 @@ class ChatUIKitBottomPanel extends StatefulWidget {
     required this.child,
     required this.height,
     required this.panelType,
+    this.showCursor = false,
     super.key,
   });
   final double height;
   final Widget child;
+  final bool showCursor;
   final ChatUIKitKeyboardPanelType panelType;
   @override
   State<ChatUIKitBottomPanel> createState() => _ChatUIKitBottomPanelState();

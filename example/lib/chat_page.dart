@@ -15,6 +15,8 @@ class _ChatPageState extends State<ChatPage> {
 
   ChatUIKitKeyboardPanelType _currentPanelType =
       ChatUIKitKeyboardPanelType.none;
+  bool readOnly = false;
+  bool hasSelectionMove = false;
 
   final ScrollController _scrollController = ScrollController();
 
@@ -80,8 +82,29 @@ class _ChatPageState extends State<ChatPage> {
       child: Row(
         children: <Widget>[
           Expanded(
-            child: TextField(
-              focusNode: _inputPanelFocusNode,
+            child: Listener(
+              onPointerDown: (event) {
+                hasSelectionMove = false;
+              },
+              onPointerMove: (event) {
+                hasSelectionMove = true;
+              },
+              onPointerUp: (event) {
+                if (readOnly && !hasSelectionMove) {
+                  _keyboardPanelController
+                      .switchPanel(ChatUIKitKeyboardPanelType.keyboard);
+                  readOnly = false;
+                }
+              },
+              child: TextField(
+                focusNode: _inputPanelFocusNode,
+                readOnly: readOnly,
+                showCursor: true,
+                decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.all(8),
+                ),
+              ),
             ),
           ),
           IconButton(
@@ -116,24 +139,30 @@ class _ChatPageState extends State<ChatPage> {
         emojiPanel(),
         morePanel(),
       ],
-      onPanelChanged: (panelType) {
+      onPanelChanged: (panelType, readOnly) {
         _currentPanelType = panelType;
+        if (this.readOnly != readOnly) {
+          setState(() {
+            this.readOnly = readOnly;
+          });
+        }
       },
     );
   }
 
   ChatUIKitBottomPanel inputPanel() {
-    return ChatUIKitBottomPanel(
+    return const ChatUIKitBottomPanel(
       height: 0,
       panelType: ChatUIKitKeyboardPanelType.keyboard,
-      child: Container(),
+      child: SizedBox.shrink(),
     );
   }
 
   ChatUIKitBottomPanel emojiPanel() {
     return ChatUIKitBottomPanel(
-      height: 280,
+      height: 210,
       panelType: ChatUIKitKeyboardPanelType.emoji,
+      showCursor: true,
       child: Container(
         color: Colors.blue,
       ),

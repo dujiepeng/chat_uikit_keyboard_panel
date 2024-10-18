@@ -9,7 +9,7 @@ class ChatUIKitKeyboardPanelController {
   _ChatUIKitKeyboardPanelState? _state;
   final FocusNode? inputPanelFocusNode;
   ChatUIKitKeyboardPanelType currentPanelType = ChatUIKitKeyboardPanelType.none;
-
+  bool ignoreFocus = false;
   void _attach(_ChatUIKitKeyboardPanelState state) {
     _state = state;
   }
@@ -21,6 +21,7 @@ class ChatUIKitKeyboardPanelController {
   ChatUIKitKeyboardPanelController({this.inputPanelFocusNode}) {
     if (inputPanelFocusNode != null) {
       inputPanelFocusNode!.addListener(() {
+        if (ignoreFocus) return;
         if (inputPanelFocusNode!.hasFocus) {
           switchPanel(ChatUIKitKeyboardPanelType.keyboard);
         }
@@ -44,7 +45,10 @@ class ChatUIKitKeyboardPanel extends StatefulWidget {
     super.key,
   });
 
-  final void Function(ChatUIKitKeyboardPanelType panelType)? onPanelChanged;
+  final void Function(
+    ChatUIKitKeyboardPanelType panelType,
+    bool readOnly,
+  )? onPanelChanged;
   final ChatUIKitKeyboardPanelController controller;
   final List<ChatUIKitBottomPanel> bottomPanels;
   final bool maintainBottomViewPadding;
@@ -101,6 +105,7 @@ class _ChatUIKitKeyboardPanelState extends State<ChatUIKitKeyboardPanel> {
 
   void switchPanel(ChatUIKitKeyboardPanelType panelType) {
     _currentPanelType = panelType;
+    bool readOnly = false;
     if (_currentPanelType == ChatUIKitKeyboardPanelType.none) {
       keyboardHeight = 0;
     } else {
@@ -108,18 +113,30 @@ class _ChatUIKitKeyboardPanelState extends State<ChatUIKitKeyboardPanel> {
         if (panel.panelType == panelType) {
           keyboardHeight = panel.height;
           _currentPanel = panel.child;
+          readOnly = panel.showCursor;
           break;
         }
       }
     }
     if (_currentPanelType != ChatUIKitKeyboardPanelType.keyboard) {
       _responding = false;
-      widget.controller.inputPanelFocusNode?.unfocus();
+      if (!readOnly) {
+        widget.controller.inputPanelFocusNode?.unfocus();
+      } else {
+        if (widget.controller.inputPanelFocusNode?.hasFocus == false) {
+          widget.controller.ignoreFocus = true;
+          widget.controller.inputPanelFocusNode?.requestFocus();
+        }
+      }
     } else {
       _responding = true;
     }
-    widget.onPanelChanged?.call(panelType);
+    widget.onPanelChanged?.call(panelType, readOnly);
+
     setState(() {});
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      widget.controller.ignoreFocus = false;
+    });
   }
 
   @override
@@ -129,6 +146,7 @@ class _ChatUIKitKeyboardPanelState extends State<ChatUIKitKeyboardPanel> {
       curve: Curves.easeInOut,
       child: SizedBox(
         height: keyboardHeight,
+        width: double.infinity,
         child: _currentPanel,
       ),
       onEnd: () {},
