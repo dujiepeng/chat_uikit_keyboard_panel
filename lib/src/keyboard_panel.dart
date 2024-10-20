@@ -54,7 +54,7 @@ class ChatUIKitKeyboardPanel extends StatefulWidget {
     required this.controller,
     this.maintainBottomViewPadding = false,
     this.onPanelChanged,
-    this.bottomPanels = const <ChatUIKitBottomPanel>[],
+    this.bottomPanels = const <ChatUIKitBottomPanelData>[],
     super.key,
   });
 
@@ -63,7 +63,7 @@ class ChatUIKitKeyboardPanel extends StatefulWidget {
     bool readOnly,
   )? onPanelChanged;
   final ChatUIKitKeyboardPanelController controller;
-  final List<ChatUIKitBottomPanel> bottomPanels;
+  final List<ChatUIKitBottomPanelData> bottomPanels;
   final bool maintainBottomViewPadding;
 
   @override
@@ -72,7 +72,7 @@ class ChatUIKitKeyboardPanel extends StatefulWidget {
 
 class _ChatUIKitKeyboardPanelState extends State<ChatUIKitKeyboardPanel> {
   double keyboardHeight = 0;
-
+  double lastKeyboardHeight = 0;
   Widget? _currentPanel;
   bool _responding = true;
 
@@ -130,7 +130,12 @@ class _ChatUIKitKeyboardPanelState extends State<ChatUIKitKeyboardPanel> {
           } else {
             keyboardHeight = panel.height;
           }
-          _currentPanel = panel.child;
+          if (lastKeyboardHeight != 0) {
+            _currentPanel = panel.child ?? _currentPanel;
+          } else {
+            _currentPanel = panel.child;
+          }
+
           readOnly = panel.showCursor;
           break;
         }
@@ -150,18 +155,19 @@ class _ChatUIKitKeyboardPanelState extends State<ChatUIKitKeyboardPanel> {
       _responding = true;
     }
     widget.onPanelChanged?.call(panelType, readOnly);
-    debugPrint('keyboardHeight: $keyboardHeight');
     setState(() {});
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       widget.controller.ignoreFocus = false;
+      lastKeyboardHeight = keyboardHeight;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     Widget content = AnimatedSize(
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeInOut,
+      duration: Duration(milliseconds: 180),
+      alignment: Alignment.topCenter,
+      curve: Curves.linear,
       child: SizedBox(
         height: keyboardHeight,
         width: double.infinity,

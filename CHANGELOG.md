@@ -1,3 +1,7 @@
+## 0.0.6
+
+* Optimization logic
+
 ## 0.0.5
 
 * Optimization logic

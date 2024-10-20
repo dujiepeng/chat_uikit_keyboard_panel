@@ -131,7 +131,7 @@ class _ChatPageState extends State<ChatPage> {
     return ChatUIKitKeyboardPanel(
       maintainBottomViewPadding: true,
       controller: _keyboardPanelController,
-      bottomPanels: <ChatUIKitBottomPanel>[
+      bottomPanels: <ChatUIKitBottomPanelData>[
         inputPanel(),
         emojiPanel(),
         morePanel(),
@@ -147,16 +147,16 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  ChatUIKitBottomPanel inputPanel() {
-    return const ChatUIKitBottomPanel(
+  ChatUIKitBottomPanelData inputPanel() {
+    return const ChatUIKitBottomPanelData(
       height: 0,
       panelType: ChatUIKitKeyboardPanelType.keyboard,
       child: SizedBox.shrink(),
     );
   }
 
-  ChatUIKitBottomPanel emojiPanel() {
-    return ChatUIKitBottomPanel(
+  ChatUIKitBottomPanelData emojiPanel() {
+    return ChatUIKitBottomPanelData(
       height: 210,
       panelType: ChatUIKitKeyboardPanelType.emoji,
       showCursor: true,
@@ -166,8 +166,8 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  ChatUIKitBottomPanel morePanel() {
-    return ChatUIKitBottomPanel(
+  ChatUIKitBottomPanelData morePanel() {
+    return ChatUIKitBottomPanelData(
       height: 300,
       panelType: ChatUIKitKeyboardPanelType.more,
       child: Container(
