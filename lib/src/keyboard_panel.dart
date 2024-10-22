@@ -10,6 +10,7 @@ class ChatUIKitKeyboardPanelController {
   late final FocusNode _inputPanelFocusNode;
   late final TextEditingController _inputPanelController;
   ChatUIKitKeyboardPanelType currentPanelType = ChatUIKitKeyboardPanelType.none;
+  bool readOnly = false;
   bool ignoreFocus = false;
   void _attach(_ChatUIKitKeyboardPanelState state) {
     _state = state;
@@ -46,6 +47,11 @@ class ChatUIKitKeyboardPanelController {
     if (_state != null) {
       _state!.switchPanel(panelType);
     }
+  }
+
+  void dispose() {
+    _inputPanelFocusNode.dispose();
+    _inputPanelController.dispose();
   }
 }
 
@@ -88,32 +94,32 @@ class _ChatUIKitKeyboardPanelState extends State<ChatUIKitKeyboardPanel> {
     super.initState();
     widget.controller._attach(this);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      ChatUikitKeyboardHeight.instance.onKeyboardHeightChange =
-          (height, safeArea) {
-        if (_responding) {
-          if (Platform.isAndroid) {
-            keyboardHeight = height / View.of(context).devicePixelRatio;
-          } else {
-            keyboardHeight = height;
-            if (currentPanelType == ChatUIKitKeyboardPanelType.keyboard) {
-              if (widget.maintainBottomViewPadding == true) {
-                keyboardHeight -= safeArea;
-                keyboardHeight = max(keyboardHeight, 0);
-              }
-            }
-          }
-
-          setState(() {});
-        }
-      };
+      ChatUikitKeyboardHeight.instance.addKeyboardHeightCallback(update);
     });
   }
 
+  void update(double height, double safeArea) {
+    if (_responding) {
+      if (Platform.isAndroid) {
+        keyboardHeight = height / View.of(context).devicePixelRatio;
+      } else {
+        keyboardHeight = height;
+        if (currentPanelType == ChatUIKitKeyboardPanelType.keyboard) {
+          if (widget.maintainBottomViewPadding == true) {
+            keyboardHeight -= safeArea;
+            keyboardHeight = max(keyboardHeight, 0);
+          }
+        }
+      }
+
+      setState(() {});
+    }
+  }
+
   @override
-  void dispose() {
+  dispose() {
     widget.controller._detach();
-    widget.controller._inputPanelFocusNode.dispose();
-    widget.controller._inputPanelController.dispose();
+    ChatUikitKeyboardHeight.instance.removeKeyboardHeightCallback(update);
     super.dispose();
   }
 
@@ -153,6 +159,10 @@ class _ChatUIKitKeyboardPanelState extends State<ChatUIKitKeyboardPanel> {
       }
     } else {
       _responding = true;
+      if (widget.controller._inputPanelFocusNode.hasFocus == false) {
+        widget.controller.ignoreFocus = true;
+        widget.controller._inputPanelFocusNode.requestFocus();
+      }
     }
     widget.onPanelChanged?.call(panelType, readOnly);
     setState(() {});
@@ -165,7 +175,7 @@ class _ChatUIKitKeyboardPanelState extends State<ChatUIKitKeyboardPanel> {
   @override
   Widget build(BuildContext context) {
     Widget content = AnimatedSize(
-      duration: Duration(milliseconds: 180),
+      duration: const Duration(milliseconds: 210),
       alignment: Alignment.topCenter,
       curve: Curves.linear,
       child: SizedBox(

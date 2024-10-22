@@ -6,7 +6,7 @@ class ChatUikitKeyboardHeight {
   static ChatUikitKeyboardHeight get instance =>
       _instance ??= ChatUikitKeyboardHeight._();
 
-  void Function(double height, double safeArea)? _onKeyboardHeightChange;
+  final List<KeyboardHeightCallback> _keyboardHeightCallbacks = [];
 
   ChatUikitKeyboardHeight._() {
     channel.setMethodCallHandler((call) async {
@@ -14,13 +14,21 @@ class ChatUikitKeyboardHeight {
         Map map = call.arguments;
         double height = map["height"] ?? 0;
         double safeArea = map["safeArea"] ?? 0;
-        _onKeyboardHeightChange?.call(height, safeArea);
+
+        for (var element in _keyboardHeightCallbacks) {
+          element(height, safeArea);
+        }
       }
     });
   }
 
-  set onKeyboardHeightChange(
-      void Function(double height, double safeArea) value) {
-    _onKeyboardHeightChange = value;
+  void addKeyboardHeightCallback(KeyboardHeightCallback callback) {
+    _keyboardHeightCallbacks.add(callback);
+  }
+
+  void removeKeyboardHeightCallback(KeyboardHeightCallback callback) {
+    _keyboardHeightCallbacks.remove(callback);
   }
 }
+
+typedef KeyboardHeightCallback = void Function(double height, double safeArea);

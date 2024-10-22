@@ -66,7 +66,24 @@ class _ChatPageState extends State<ChatPage> {
 
     content = Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: () {
+              _keyboardPanelController
+                  .switchPanel(ChatUIKitKeyboardPanelType.keyboard);
+            },
+            icon: const Icon(Icons.arrow_upward),
+          ),
+          IconButton(
+            onPressed: () {
+              _keyboardPanelController
+                  .switchPanel(ChatUIKitKeyboardPanelType.none);
+            },
+            icon: const Icon(Icons.arrow_downward),
+          ),
+        ],
+      ),
       body: content,
     );
 
@@ -106,10 +123,17 @@ class _ChatPageState extends State<ChatPage> {
           ),
           IconButton(
             onPressed: () {
-              _keyboardPanelController.switchPanel(
-                  _currentPanelType == ChatUIKitKeyboardPanelType.emoji
-                      ? ChatUIKitKeyboardPanelType.none
-                      : ChatUIKitKeyboardPanelType.emoji);
+              final type = _currentPanelType == ChatUIKitKeyboardPanelType.emoji
+                  ? ChatUIKitKeyboardPanelType.none
+                  : ChatUIKitKeyboardPanelType.emoji;
+              if (type == ChatUIKitKeyboardPanelType.emoji) {
+                setState(() {
+                  readOnly = true;
+                });
+              }
+              WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                _keyboardPanelController.switchPanel(type);
+              });
             },
             icon: const Icon(Icons.face),
           ),
