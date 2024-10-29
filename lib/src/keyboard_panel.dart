@@ -12,6 +12,7 @@ class ChatUIKitKeyboardPanelController {
   ChatUIKitKeyboardPanelType currentPanelType = ChatUIKitKeyboardPanelType.none;
   bool readOnly = false;
   bool ignoreFocus = false;
+
   void _attach(_ChatUIKitKeyboardPanelState state) {
     _state = state;
   }
@@ -43,9 +44,9 @@ class ChatUIKitKeyboardPanelController {
     });
   }
 
-  void switchPanel(ChatUIKitKeyboardPanelType panelType) {
+  void switchPanel(ChatUIKitKeyboardPanelType panelType, {Duration? duration}) {
     if (_state != null) {
-      _state!.switchPanel(panelType);
+      _state!.switchPanel(panelType, duration: duration);
     }
   }
 
@@ -81,11 +82,13 @@ class _ChatUIKitKeyboardPanelState extends State<ChatUIKitKeyboardPanel> {
   double lastKeyboardHeight = 0;
   Widget? _currentPanel;
   bool _responding = true;
-
+  Duration? _duration;
   double bottomPadding = 0;
 
   ChatUIKitKeyboardPanelType _currentPanelType =
       ChatUIKitKeyboardPanelType.none;
+
+  ChatUIKitKeyboardPanelType _lastPanelType = ChatUIKitKeyboardPanelType.none;
 
   ChatUIKitKeyboardPanelType get currentPanelType => _currentPanelType;
 
@@ -123,7 +126,9 @@ class _ChatUIKitKeyboardPanelState extends State<ChatUIKitKeyboardPanel> {
     super.dispose();
   }
 
-  void switchPanel(ChatUIKitKeyboardPanelType panelType) {
+  void switchPanel(ChatUIKitKeyboardPanelType panelType, {Duration? duration}) {
+    _duration = duration;
+    _lastPanelType = _currentPanelType;
     _currentPanelType = panelType;
     bool readOnly = false;
     if (_currentPanelType == ChatUIKitKeyboardPanelType.none) {
@@ -175,7 +180,11 @@ class _ChatUIKitKeyboardPanelState extends State<ChatUIKitKeyboardPanel> {
   @override
   Widget build(BuildContext context) {
     Widget content = AnimatedSize(
-      duration: const Duration(milliseconds: 210),
+      duration: _duration ??
+          (_currentPanelType == ChatUIKitKeyboardPanelType.keyboard &&
+                  _lastPanelType == ChatUIKitKeyboardPanelType.none
+              ? const Duration(milliseconds: 100)
+              : const Duration(milliseconds: 200)),
       alignment: Alignment.topCenter,
       curve: Curves.linear,
       child: SizedBox(
@@ -183,7 +192,9 @@ class _ChatUIKitKeyboardPanelState extends State<ChatUIKitKeyboardPanel> {
         width: double.infinity,
         child: _currentPanel,
       ),
-      onEnd: () {},
+      onEnd: () {
+        _duration = null;
+      },
     );
 
     return content;
