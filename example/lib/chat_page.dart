@@ -124,7 +124,7 @@ class _ChatPageState extends State<ChatPage> {
           IconButton(
             onPressed: () {
               final type = _currentPanelType == ChatUIKitKeyboardPanelType.emoji
-                  ? ChatUIKitKeyboardPanelType.none
+                  ? ChatUIKitKeyboardPanelType.keyboard
                   : ChatUIKitKeyboardPanelType.emoji;
               if (type == ChatUIKitKeyboardPanelType.emoji) {
                 setState(() {
@@ -141,7 +141,7 @@ class _ChatPageState extends State<ChatPage> {
             onPressed: () {
               _keyboardPanelController.switchPanel(
                   _currentPanelType == ChatUIKitKeyboardPanelType.more
-                      ? ChatUIKitKeyboardPanelType.none
+                      ? ChatUIKitKeyboardPanelType.keyboard
                       : ChatUIKitKeyboardPanelType.more);
             },
             icon: const Icon(Icons.more),
@@ -175,7 +175,6 @@ class _ChatPageState extends State<ChatPage> {
     return const ChatUIKitBottomPanelData(
       height: 0,
       panelType: ChatUIKitKeyboardPanelType.keyboard,
-      child: SizedBox.shrink(),
     );
   }
 

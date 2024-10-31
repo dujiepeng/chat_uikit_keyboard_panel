@@ -183,8 +183,8 @@ class _ChatUIKitKeyboardPanelState extends State<ChatUIKitKeyboardPanel> {
       duration: _duration ??
           (_currentPanelType == ChatUIKitKeyboardPanelType.keyboard &&
                   _lastPanelType == ChatUIKitKeyboardPanelType.none
-              ? const Duration(milliseconds: 100)
-              : const Duration(milliseconds: 200)),
+              ? const Duration(milliseconds: 200)
+              : const Duration(milliseconds: 250)),
       alignment: Alignment.topCenter,
       curve: Curves.linear,
       child: SizedBox(
