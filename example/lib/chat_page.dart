@@ -16,7 +16,8 @@ class _ChatPageState extends State<ChatPage> {
       ChatUIKitKeyboardPanelType.none;
   bool readOnly = false;
   bool hasSelectionMove = false;
-
+  // 用于设置输入框与底部的距离，用于调整文字键盘弹出时的差值
+  final bottomPadding = 100.0;
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -56,6 +57,9 @@ class _ChatPageState extends State<ChatPage> {
         ),
         _keyboardWidget(),
         _keyboardPanel(),
+        SizedBox(
+          height: bottomPadding,
+        )
       ],
     );
 
@@ -93,6 +97,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget _keyboardWidget() {
     return Container(
       color: Colors.red,
+      padding: const EdgeInsets.symmetric(horizontal: 0),
       child: Row(
         children: <Widget>[
           Expanded(
@@ -112,6 +117,7 @@ class _ChatPageState extends State<ChatPage> {
               },
               child: TextField(
                 focusNode: _keyboardPanelController.inputPanelFocusNode,
+                selectionControls: SelectionControls(),
                 readOnly: readOnly,
                 showCursor: true,
                 decoration: const InputDecoration(
@@ -160,6 +166,7 @@ class _ChatPageState extends State<ChatPage> {
         emojiPanel(),
         morePanel(),
       ],
+      bottomDistance: bottomPadding,
       onPanelChanged: (panelType, readOnly) {
         _currentPanelType = panelType;
         if (this.readOnly != readOnly) {

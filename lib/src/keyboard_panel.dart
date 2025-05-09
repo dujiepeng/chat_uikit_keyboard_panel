@@ -9,7 +9,9 @@ class ChatUIKitKeyboardPanelController {
   _ChatUIKitKeyboardPanelState? _state;
   late final FocusNode _inputPanelFocusNode;
   late final TextEditingController _inputPanelController;
-  ChatUIKitKeyboardPanelType currentPanelType = ChatUIKitKeyboardPanelType.none;
+  ChatUIKitKeyboardPanelType get currentPanelType =>
+      _state?._currentPanelType ?? ChatUIKitKeyboardPanelType.none;
+
   bool readOnly = false;
   bool ignoreFocus = false;
 
@@ -62,6 +64,7 @@ class ChatUIKitKeyboardPanel extends StatefulWidget {
     this.maintainBottomViewPadding = false,
     this.onPanelChanged,
     this.bottomPanels = const <ChatUIKitBottomPanelData>[],
+    this.bottomDistance = 0,
     super.key,
   });
 
@@ -72,6 +75,7 @@ class ChatUIKitKeyboardPanel extends StatefulWidget {
   final ChatUIKitKeyboardPanelController controller;
   final List<ChatUIKitBottomPanelData> bottomPanels;
   final bool maintainBottomViewPadding;
+  final double bottomDistance;
 
   @override
   State<ChatUIKitKeyboardPanel> createState() => _ChatUIKitKeyboardPanelState();
@@ -88,7 +92,7 @@ class _ChatUIKitKeyboardPanelState extends State<ChatUIKitKeyboardPanel> {
   ChatUIKitKeyboardPanelType _currentPanelType =
       ChatUIKitKeyboardPanelType.none;
 
-  ChatUIKitKeyboardPanelType _lastPanelType = ChatUIKitKeyboardPanelType.none;
+  // ChatUIKitKeyboardPanelType _lastPanelType = ChatUIKitKeyboardPanelType.none;
 
   ChatUIKitKeyboardPanelType get currentPanelType => _currentPanelType;
 
@@ -128,7 +132,7 @@ class _ChatUIKitKeyboardPanelState extends State<ChatUIKitKeyboardPanel> {
 
   void switchPanel(ChatUIKitKeyboardPanelType panelType, {Duration? duration}) {
     _duration = duration;
-    _lastPanelType = _currentPanelType;
+    // _lastPanelType = _currentPanelType;
     _currentPanelType = panelType;
     bool readOnly = false;
     if (_currentPanelType == ChatUIKitKeyboardPanelType.none) {
@@ -174,21 +178,21 @@ class _ChatUIKitKeyboardPanelState extends State<ChatUIKitKeyboardPanel> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       widget.controller.ignoreFocus = false;
       lastKeyboardHeight = keyboardHeight;
+      debugPrint(
+          'switchPanel: $panelType, readOnly: $readOnly, height: $keyboardHeight');
     });
   }
 
   @override
   Widget build(BuildContext context) {
     Widget content = AnimatedSize(
-      duration: _duration ??
-          (_currentPanelType == ChatUIKitKeyboardPanelType.keyboard &&
-                  _lastPanelType == ChatUIKitKeyboardPanelType.none
-              ? const Duration(milliseconds: 200)
-              : const Duration(milliseconds: 250)),
+      duration: _duration ?? const Duration(milliseconds: 150),
       alignment: Alignment.topCenter,
       curve: Curves.linear,
       child: SizedBox(
-        height: keyboardHeight,
+        height: _currentPanelType == ChatUIKitKeyboardPanelType.keyboard
+            ? max(keyboardHeight - widget.bottomDistance, 0)
+            : keyboardHeight,
         width: double.infinity,
         child: _currentPanel,
       ),
